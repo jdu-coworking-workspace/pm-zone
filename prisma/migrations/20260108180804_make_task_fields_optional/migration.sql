@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Task" ALTER COLUMN "assigneeId" DROP NOT NULL,
+ALTER COLUMN "due_date" DROP NOT NULL;
