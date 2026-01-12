@@ -1,3 +1,7 @@
 node_modules
 .env
 dist
+
+# HTTPS certificates for local development
+certs/
+*.pem

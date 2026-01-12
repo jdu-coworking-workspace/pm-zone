@@ -4,7 +4,9 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { store } from './app/store.js'
 import { Provider } from 'react-redux'
+import { registerServiceWorker, setupInstallPrompt } from './utils/pwa.js'
 
+// Render React app
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>
             <Provider store={store}>
@@ -12,3 +14,9 @@ createRoot(document.getElementById('root')).render(
             </Provider>
     </BrowserRouter>,
 )
+
+// Initialize PWA features after React app is mounted
+if (typeof window !== 'undefined') {
+  registerServiceWorker();
+  setupInstallPrompt();
+}

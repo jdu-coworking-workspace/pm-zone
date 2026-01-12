@@ -17,6 +17,7 @@
 
 - [✨ Features](#-features)
 - [🛠️ Tech Stack](#-tech-stack)
+- [📱 Progressive Web App](#-progressive-web-app)
 - [🚀 Getting Started](#-getting-started)
 - [🤝 Contributing](#-contributing)
 - [📜 License](#-license)
@@ -25,6 +26,8 @@
 
 ## 📝 Features <a name="-features"></a>
 
+- **Progressive Web App (PWA):** Install on desktop and mobile devices for native app experience
+- **Offline Support:** Works offline with cached data and automatic sync when back online
 - **Multiple Workspaces:** Allow multiple workspaces to be created, each with its own set of projects, tasks, and members.
 - **Project Management:** Manage projects, tasks, and team members.
 - **Analytics:** View project analytics, including progress, completion rate, and team size.
@@ -33,10 +36,64 @@
 
 ## 🛠️ Tech Stack <a name="-tech-stack"></a>
 
-- **Framework:** ReactJS
+- **Frontend:** ReactJS with Redux Toolkit
+- **Backend:** Express.js + Socket.IO for real-time updates
+- **Database:** PostgreSQL with Prisma ORM
 - **Styling:** Tailwind CSS
 - **UI Components:** Lucide React for icons
-- **State Management:** Redux Toolkit
+- **PWA:** Service Workers, Web App Manifest, offline-first architecture
+
+## 📱 Progressive Web App <a name="-progressive-web-app"></a>
+
+This application is a fully functional Progressive Web App (PWA) that can be installed on desktop and mobile devices!
+
+### ✨ PWA Features
+
+- **📲 Installable:** Add to home screen on mobile or install on desktop for native app experience
+- **⚡ Offline Support:** Works without internet connection using cached data
+- **🔄 Auto-Updates:** Automatically notifies users when new version is available
+- **🎨 Themed:** Custom splash screen and theme colors matching app design
+- **🚀 Fast Loading:** Cached assets load instantly
+
+### 🧪 Testing PWA
+
+```bash
+# Start development server
+npm run dev
+
+# Open http://localhost:5173 in Chrome/Edge
+# Wait 30 seconds - install button appears in top-right
+# Click "Install App" to install as PWA
+```
+
+### 📱 Installation
+
+**Desktop (Chrome/Edge):**
+1. Visit the app URL
+2. Click the purple "Install App" button (top-right)
+3. Or use browser menu > "Install PM Zone"
+
+**Mobile (iOS Safari):**
+1. Open in Safari
+2. Tap Share button
+3. "Add to Home Screen"
+
+**Mobile (Android Chrome):**
+1. Open in Chrome
+2. Tap install banner or menu > "Install app"
+
+### 📚 Documentation
+
+- **Complete Guide:** See `PWA_COMPLETE.md` for full implementation details
+- **Testing Guide:** See `PWA_TESTING_GUIDE.md` for testing checklist
+- **Icon Generation:** See `public/icons/README.md` for creating production icons
+
+### 🎯 Production Deployment
+
+1. Generate PNG icons: `./generate-icons.sh your-logo.png`
+2. Deploy to HTTPS server (required for PWA)
+3. Test installation on real devices
+4. Run Lighthouse audit for PWA score
 
 ## 🚀 Getting Started <a name="-getting-started"></a>
 

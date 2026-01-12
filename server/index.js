@@ -1,5 +1,7 @@
 import express from 'express';
 import { createServer } from 'http';
+import { createServer as createHttpsServer } from 'https';
+import { readFileSync } from 'fs';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -14,9 +16,34 @@ import commentRoutes from './routes/comment.routes.js';
 import userRoutes from './routes/user.routes.js';
 import { verifyToken } from './utils/jwt.js';
 import prisma from './config/prisma.js';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
-const httpServer = createServer(app);
+
+// Try to use HTTPS if certificates exist, fallback to HTTP
+let httpServer;
+let useHttps = false;
+
+try {
+  const certPath = join(__dirname, '../certs/cert.pem');
+  const keyPath = join(__dirname, '../certs/key.pem');
+  
+  const httpsOptions = {
+    key: readFileSync(keyPath),
+    cert: readFileSync(certPath),
+  };
+  
+  httpServer = createHttpsServer(httpsOptions, app);
+  useHttps = true;
+  console.log('🔐 HTTPS enabled for backend');
+} catch (error) {
+  httpServer = createServer(app);
+  console.log('⚠️  Running backend on HTTP (HTTPS certs not found)');
+}
 
 // Socket.IO setup
 const io = new Server(httpServer, {
@@ -172,13 +199,14 @@ const PORT = config.port;
 const HOST = '0.0.0.0'; // Bind to all network interfaces
 
 httpServer.listen(PORT, HOST, () => {
+  const protocol = useHttps ? 'https' : 'http';
   const localIP = '192.168.100.70'; // Update this if IP changes
   
   console.log('');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log(`🚀 Server running on:`);
-  console.log(`   Local:   http://localhost:${PORT}`);
-  console.log(`   Network: http://${localIP}:${PORT}`);
+  console.log(`   Local:   ${protocol}://localhost:${PORT}`);
+  console.log(`   Network: ${protocol}://${localIP}:${PORT}`);
   console.log(`⚡ Socket.IO ready for connections`);
   console.log(`🌍 Environment: ${config.nodeEnv}`);
   console.log(`🔐 CORS enabled for: ${config.cors.origin === true ? 'ALL ORIGINS (*)' : config.cors.origin}`);

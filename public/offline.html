@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - PM Zone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            margin: 1rem;
+        }
+
+        .icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .info {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .spinner {
+            display: none;
+            margin: 2rem auto;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📡</div>
+        <h1>You're Offline</h1>
+        <p>It looks like you've lost your internet connection. Don't worry, your work is safe!</p>
+        
+        <button class="button" onclick="tryReconnect()">Try Again</button>
+        
+        <div class="spinner" id="spinner"></div>
+        <div class="status" id="status"></div>
+        
+        <div class="info">
+            <strong>💡 Tip:</strong> When you're back online, your pending changes will automatically sync.
+        </div>
+    </div>
+
+    <script>
+        function tryReconnect() {
+            const spinner = document.getElementById('spinner');
+            const status = document.getElementById('status');
+            
+            spinner.style.display = 'block';
+            status.textContent = 'Checking connection...';
+            
+            // Try to fetch a small resource to check connectivity
+            fetch('/', { method: 'HEAD', cache: 'no-store' })
+                .then(() => {
+                    status.textContent = '✅ Connection restored!';
+                    status.style.color = '#10b981';
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                })
+                .catch(() => {
+                    spinner.style.display = 'none';
+                    status.textContent = '❌ Still offline. Please check your connection.';
+                    status.style.color = '#ef4444';
+                });
+        }
+
+        // Auto-check connection every 10 seconds
+        setInterval(() => {
+            if (navigator.onLine) {
+                fetch('/', { method: 'HEAD', cache: 'no-store' })
+                    .then(() => {
+                        window.location.reload();
+                    })
+                    .catch(() => {
+                        // Still offline
+                    });
+            }
+        }, 10000);
+
+        // Listen for online event
+        window.addEventListener('online', () => {
+            const status = document.getElementById('status');
+            status.textContent = '✅ Connection restored!';
+            status.style.color = '#10b981';
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
