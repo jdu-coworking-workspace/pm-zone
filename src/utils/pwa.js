@@ -100,6 +100,11 @@ function showInstallButton(deferredPrompt) {
     return;
   }
 
+  // Check if user previously dismissed
+  if (localStorage.getItem('pwa-install-dismissed') === 'true') {
+    return;
+  }
+
   const installBtn = document.createElement('button');
   installBtn.id = 'pwa-install-btn';
   installBtn.innerHTML = `
@@ -109,6 +114,10 @@ function showInstallButton(deferredPrompt) {
       <line x1="12" y1="15" x2="12" y2="3"></line>
     </svg>
     <span>Install App</span>
+    <svg id="pwa-dismiss-btn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 8px; opacity: 0.7; cursor: pointer;">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
   `;
   
   installBtn.style.cssText = `
@@ -128,9 +137,30 @@ function showInstallButton(deferredPrompt) {
     display: flex;
     align-items: center;
     gap: 8px;
+    transition: transform 0.2s, opacity 0.2s;
   `;
 
-  installBtn.addEventListener('click', async () => {
+  // Hover effect
+  installBtn.addEventListener('mouseenter', () => {
+    installBtn.style.transform = 'scale(1.05)';
+  });
+  
+  installBtn.addEventListener('mouseleave', () => {
+    installBtn.style.transform = 'scale(1)';
+  });
+
+  // Install button click
+  installBtn.addEventListener('click', async (e) => {
+    // Check if clicked on dismiss button
+    if (e.target.id === 'pwa-dismiss-btn' || e.target.closest('#pwa-dismiss-btn')) {
+      console.log('Install prompt dismissed by user');
+      localStorage.setItem('pwa-install-dismissed', 'true');
+      installBtn.style.opacity = '0';
+      installBtn.style.transform = 'scale(0.8)';
+      setTimeout(() => installBtn.remove(), 200);
+      return;
+    }
+
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
