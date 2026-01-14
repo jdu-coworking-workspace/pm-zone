@@ -3,7 +3,17 @@ import { success } from '../utils/response.js';
 
 export const getTasks = async (req, res, next) => {
   try {
-    const tasks = await taskService.getTasks(req.query.projectId, req.user.id);
+    const { projectId, workspaceId } = req.query;
+    
+    let tasks;
+    if (workspaceId) {
+      tasks = await taskService.getWorkspaceTasks(workspaceId, req.user.id);
+    } else if (projectId) {
+      tasks = await taskService.getTasks(projectId, req.user.id);
+    } else {
+      return res.status(400).json({ success: false, message: 'Either projectId or workspaceId is required' });
+    }
+    
     res.json(success(tasks));
   } catch (error) {
     if (error.message.includes('not found') || error.message === 'Access denied') {

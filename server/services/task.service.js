@@ -25,6 +25,26 @@ export const getTasks = async (projectId, userId) => {
   });
 };
 
+export const getWorkspaceTasks = async (workspaceId, userId) => {
+  const hasAccess = await prisma.workspaceMember.findFirst({
+    where: { workspaceId, userId },
+  });
+
+  if (!hasAccess) throw new Error('Access denied');
+
+  return await prisma.task.findMany({
+    where: {
+      project: { workspaceId },
+    },
+    include: {
+      assignee: { select: { id: true, name: true, email: true, image: true } },
+      project: { select: { id: true, name: true, workspaceId: true } },
+      _count: { select: { comments: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+};
+
 export const getTaskById = async (taskId, userId) => {
   const task = await prisma.task.findUnique({
     where: { id: taskId },

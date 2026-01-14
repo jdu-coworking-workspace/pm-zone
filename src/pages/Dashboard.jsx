@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchWorkspaces } from '../features/workspaceSlice'
 import { fetchProjects } from '../features/projectSlice'
-import { fetchTasks } from '../features/taskSlice'
+import { fetchWorkspaceTasks } from '../features/taskSlice'
 import StatsGrid from '../components/StatsGrid'
 import ProjectOverview from '../components/ProjectOverview'
 import RecentActivity from '../components/RecentActivity'
@@ -19,10 +19,7 @@ const Dashboard = () => {
     useEffect(() => {
         if (currentWorkspace?.id) {
             dispatch(fetchProjects(currentWorkspace.id))
-            // Fetch tasks for all projects in the workspace
-            currentWorkspace.projects?.forEach(project => {
-                dispatch(fetchTasks({ projectId: project.id }))
-            })
+            dispatch(fetchWorkspaceTasks({ workspaceId: currentWorkspace.id }))
         }
     }, [currentWorkspace?.id, dispatch])
 

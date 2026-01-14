@@ -12,6 +12,17 @@ export const fetchTasks = createAsyncThunk(
   }
 );
 
+export const fetchWorkspaceTasks = createAsyncThunk(
+  'tasks/fetchWorkspace',
+  async ({ workspaceId }, { rejectWithValue }) => {
+    try {
+      return await taskAPI.getAllByWorkspace(workspaceId);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const createTask = createAsyncThunk(
   'tasks/create',
   async ({ workspaceId, projectId, data }, { rejectWithValue }) => {
@@ -86,6 +97,19 @@ const taskSlice = createSlice({
         state.items = action.payload;
       })
       .addCase(fetchTasks.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch workspace tasks
+      .addCase(fetchWorkspaceTasks.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchWorkspaceTasks.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
+      })
+      .addCase(fetchWorkspaceTasks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
