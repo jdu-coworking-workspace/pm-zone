@@ -55,11 +55,11 @@ export default function StatsGrid() {
 
     useEffect(() => {
         if (projects && tasks) {
-            const completedTasks = tasks.filter((t) => t.status === "COMPLETED").length;
+            const completedTasks = tasks.filter((t) => t.status === "DONE").length;
             const myTasks = tasks.filter((t) => t.assigneeId === user?.id).length;
             const overdueTasks = tasks.filter((t) => {
-                if (!t.dueDate) return false;
-                return new Date(t.dueDate) < new Date() && t.status !== "COMPLETED";
+                if (!t.due_date) return false;
+                return new Date(t.due_date) < new Date() && t.status !== "DONE";
             }).length;
 
             setStats({
